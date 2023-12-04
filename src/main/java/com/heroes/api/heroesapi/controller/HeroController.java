@@ -76,13 +76,18 @@ public class HeroController {
      * @return ResponseEntity with array of {@link Hero hero} objects (may be empty) and
      * HTTP status of OK<br>
      * ResponseEntity with HTTP status of INTERNAL_SERVER_ERROR otherwise
+     * @throws IOException
      */
     @GetMapping("")
-    public ResponseEntity<Hero[]> getHeroes() {
+    public ResponseEntity<Hero[]> getHeroes() throws IOException {
         LOG.info("GET /heroes");
-
-        // Replace below with your implementation
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        Hero[] hero = heroDao.getHeroes();
+        if (hero[0] != null) {
+            return new ResponseEntity<Hero[]>(hero, HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     /**
@@ -97,13 +102,14 @@ public class HeroController {
      * <p>
      * Example: Find all heroes that contain the text "ma"
      * GET http://localhost:8080/heroes/?name=ma
+     * @throws IOException
      */
     @GetMapping("/")
-    public ResponseEntity<Hero[]> searchHeroes(@RequestParam String name) {
+    public ResponseEntity<Hero[]> searchHeroes(@RequestParam String name) throws IOException {
         LOG.info("GET /heroes/?name="+name);
 
-        // Replace below with your implementation
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        Hero[] heroes = heroDao.getHeroes();
+        return new ResponseEntity<Hero[]>(heroes, HttpStatus.OK);
     }
 
     /**
@@ -114,13 +120,14 @@ public class HeroController {
      * @return ResponseEntity with created {@link Hero hero} object and HTTP status of CREATED<br>
      * ResponseEntity with HTTP status of CONFLICT if {@link Hero hero} object already exists<br>
      * ResponseEntity with HTTP status of INTERNAL_SERVER_ERROR otherwise
+     * @throws IOException
      */
     @PostMapping("")
-    public ResponseEntity<Hero> createHero(@RequestBody Hero hero) {
+    public ResponseEntity<Hero> createHero(@RequestBody Hero hero) throws IOException {
         LOG.info("POST /heroes " + hero);
 
-        // Replace below with your implementation
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        Hero newHero = heroDao.createHero(hero);
+        return new ResponseEntity<Hero>(newHero, HttpStatus.CREATED);
     }
 
     /**
@@ -131,13 +138,14 @@ public class HeroController {
      * @return ResponseEntity with updated {@link Hero hero} object and HTTP status of OK if updated<br>
      * ResponseEntity with HTTP status of NOT_FOUND if not found<br>
      * ResponseEntity with HTTP status of INTERNAL_SERVER_ERROR otherwise
+     * @throws IOException
      */
     @PutMapping("")
-    public ResponseEntity<Hero> updateHero(@RequestBody Hero hero) {
+    public ResponseEntity<Hero> updateHero(@RequestBody Hero hero) throws IOException {
         LOG.info("PUT /heroes " + hero);
 
-        // Replace below with your implementation
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        Hero newHero = heroDao.updateHero(hero);
+        return new ResponseEntity<Hero>(newHero, HttpStatus.OK);
     }
 
     /**
@@ -148,12 +156,18 @@ public class HeroController {
      * @return ResponseEntity HTTP status of OK if deleted<br>
      * ResponseEntity with HTTP status of NOT_FOUND if not found<br>
      * ResponseEntity with HTTP status of INTERNAL_SERVER_ERROR otherwise
+     * @throws IOException
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Hero> deleteHero(@PathVariable int id) {
+    public ResponseEntity<Hero> deleteHero(@PathVariable int id) throws IOException {
         LOG.info("DELETE /heroes/" + id);
 
-        // Replace below with your implementation
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        Hero hero = heroDao.getHero(id);
+        if (hero != null) {
+            heroDao.deleteHero(id);
+            return new ResponseEntity<Hero>(hero, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<Hero>(hero, HttpStatus.NOT_FOUND);
+        }
     }
 }
